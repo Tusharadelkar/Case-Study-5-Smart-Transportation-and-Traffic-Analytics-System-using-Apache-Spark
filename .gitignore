@@ -1,0 +1,28 @@
+# Data (Exclude large sensor dataset, but keep smaller datasets)
+data/traffic_sensor_data.csv
+
+# Python caches
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Jupyter Notebook checkpoints
+**/.ipynb_checkpoints/
+
+# Spark directories, metastores, and logs
+spark-warehouse/
+metastore_db/
+derby.log
+*.log
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# IDE settings
+.vscode/
+.idea/
+.project
+.pydevproject
+.settings/
