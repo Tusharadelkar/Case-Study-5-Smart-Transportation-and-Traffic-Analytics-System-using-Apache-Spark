@@ -1,0 +1,12 @@
+.git/
+.github/
+.vscode/
+.idea/
+.ipynb_checkpoints/
+__pycache__/
+*.pyc
+spark-warehouse/
+metastore_db/
+java_link/
+notebooks/temp/
+data/traffic_sensor_data.csv
