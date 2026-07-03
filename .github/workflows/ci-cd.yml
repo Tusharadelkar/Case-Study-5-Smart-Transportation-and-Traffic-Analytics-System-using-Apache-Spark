@@ -72,7 +72,7 @@ jobs:
     # 10. Deploy to Kubernetes Cluster (Only on push to main/master branches)
     - name: Set up Kubeconfig Context
       if: github.event_name == 'push'
-      uses: azure/k8s-set-context-action@v3
+      uses: azure/k8s-set-context@v3
       with:
         method: kubeconfig
         kubeconfig: ${{ secrets.KUBE_CONFIG }}
