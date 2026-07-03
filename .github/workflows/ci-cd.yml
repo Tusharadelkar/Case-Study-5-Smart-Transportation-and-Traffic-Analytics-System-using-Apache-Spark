@@ -45,7 +45,7 @@ jobs:
     # 6. Test Notebook compilation (compiles Jupyter Notebook to Python script to verify no syntax bugs)
     - name: Test Jupyter Notebook Compilation
       run: |
-        jupyter nbconvert --to script notebooks/case_study_optimized.ipynb
+        jupyter nbconvert --to script notebooks/case_study.ipynb
 
     # 7. Log in to Docker Hub (Only on push to main/master branches)
     - name: Log in to Docker Hub
@@ -80,4 +80,5 @@ jobs:
     - name: Deploy to Kubernetes
       if: github.event_name == 'push'
       run: |
+        sed -i "s|image: tusharadelkar/jakarta-traffic-analysis:latest|image: tusharadelkar/jakarta-traffic-analysis:${{ github.sha }}|g" k8s/deployment.yaml
         kubectl apply -f k8s/
