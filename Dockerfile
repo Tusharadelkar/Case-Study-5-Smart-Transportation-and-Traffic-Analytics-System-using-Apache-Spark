@@ -1,14 +1,14 @@
-# Use an official Python 3.9 slim runtime as a parent image
-FROM python:3.9-slim
+# Use an official Python 3.10 slim runtime as a parent image
+FROM python:3.10-slim
 
 # Set environment variables for non-interactive installations and Spark/Java
 ENV DEBIAN_FRONTEND=noninteractive
-ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+ENV JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
 ENV PATH=$PATH:$JAVA_HOME/bin
 
-# Install system dependencies (Java 11 OpenJDK is required for Spark)
+# Install system dependencies (Java 21 OpenJDK is required for Spark 4.1+)
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    openjdk-11-jre-headless \
+    openjdk-21-jre-headless \
     build-essential \
     curl \
     && apt-get clean \

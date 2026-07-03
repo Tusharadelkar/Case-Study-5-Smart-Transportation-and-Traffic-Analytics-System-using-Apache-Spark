@@ -15,18 +15,18 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v3
 
-    # 2. Set up Python environment
-    - name: Set up Python 3.9
+    # 2. Set up Python environment (consistent with Dockerfile Python 3.10)
+    - name: Set up Python 3.10
       uses: actions/setup-python@v4
       with:
-        python-state: '3.9'
+        python-version: '3.10'
 
-    # 3. Set up Java JDK 11 (required for PySpark tests)
-    - name: Set up JDK 11
+    # 3. Set up Java JDK 17 (required for Spark 4.1+)
+    - name: Set up JDK 17
       uses: actions/setup-java@v3
       with:
         distribution: 'temurin'
-        java-version: '11'
+        java-version: '17'
 
     # 4. Install dependencies
     - name: Install Dependencies
@@ -34,7 +34,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install flake8 pytest pyspark xgboost pandas scikit-learn matplotlib seaborn jupyter nbconvert
 
-    # 5. Lint python files (e.g. check syntax errors)
+    # 5. Lint python files (check syntax errors)
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
@@ -47,14 +47,37 @@ jobs:
       run: |
         jupyter nbconvert --to script notebooks/case_study_optimized.ipynb
 
-    # 7. Set up Docker Buildx
+    # 7. Log in to Docker Hub (Only on push to main/master branches)
+    - name: Log in to Docker Hub
+      if: github.event_name == 'push'
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    # 8. Set up Docker Buildx
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
 
-    # 8. Build Docker Image (verification build)
-    - name: Build Docker Image
+    # 9. Build and Push Docker Image
+    - name: Build and Push Docker Image
       uses: docker/build-push-action@v4
       with:
         context: .
-        push: false  # Change to true and configure docker credentials to push to registry
-        tags: tusharadelkar/jakarta-traffic-analysis:latest
+        push: ${{ github.event_name == 'push' }}
+        tags: |
+          tusharadelkar/jakarta-traffic-analysis:latest
+          tusharadelkar/jakarta-traffic-analysis:${{ github.sha }}
+
+    # 10. Deploy to Kubernetes Cluster (Only on push to main/master branches)
+    - name: Set up Kubeconfig Context
+      if: github.event_name == 'push'
+      uses: azure/k8s-set-context-action@v3
+      with:
+        method: kubeconfig
+        kubeconfig: ${{ secrets.KUBE_CONFIG }}
+
+    - name: Deploy to Kubernetes
+      if: github.event_name == 'push'
+      run: |
+        kubectl apply -f k8s/

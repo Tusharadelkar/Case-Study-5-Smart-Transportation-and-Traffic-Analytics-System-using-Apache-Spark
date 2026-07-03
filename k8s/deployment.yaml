@@ -17,6 +17,7 @@ spec:
       containers:
       - name: jakarta-traffic-container
         image: tusharadelkar/jakarta-traffic-analysis:latest
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8888
           name: jupyter-port
@@ -33,5 +34,5 @@ spec:
       volumes:
       - name: data-volume
         hostPath:
-          path: /mnt/data   # Host path where the CSV datasets are located
+          path: /run/desktop/mnt/host/c/work/ai_compute/casestudy/data   # Docker Desktop WSL2 mount path
           type: DirectoryOrCreate
